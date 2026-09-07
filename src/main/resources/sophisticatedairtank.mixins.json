@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.vomiter.sophisticatedairtank.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "BackpackItem_JetpackMixin",
+    "BacktankUtilMixin",
+    "SlotMixin"
+  ],
+  "client": [
+    "BackpackBlockEntityRendererMixin",
+    "ItemRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "sophisticatedairtank.mixins.refmap.json",
+  "plugin": "com.vomiter.sophisticatedairtank.SATMixinPlugin"
+}

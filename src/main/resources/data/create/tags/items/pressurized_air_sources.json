@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "sophisticatedbackpacks:backpack",
+    "sophisticatedbackpacks:copper_backpack",
+    "sophisticatedbackpacks:iron_backpack",
+    "sophisticatedbackpacks:gold_backpack",
+    "sophisticatedbackpacks:diamond_backpack",
+    "sophisticatedbackpacks:netherite_backpack",
+    "sophisticatedairtank:pressurized_air_upgrade",
+    "sophisticatedairtank:create_jetpack_upgrade"
+  ]
+}

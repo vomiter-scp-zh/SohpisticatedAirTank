@@ -1,0 +1,14 @@
+{
+  "item.sophisticatedairtank.pressurized_air_upgrade": "加壓空氣升級",
+  "item.sophisticatedairtank.create_jetpack_upgrade": "噴射背包升級",
+  "item.sophisticatedairtank.pressurized_air_upgrade.tooltip": "將背包的部分物品欄空間轉換為加壓空氣儲存槽。\n將背包放置在地上，並在其上方連接垂直旋轉的傳動桿，即可補充空氣。\n請注意，充氣期間背包的大部分功能將暫時停用。",
+  "item.sophisticatedairtank.create_jetpack_upgrade.tooltip": "除了具備加壓空氣升級的功能外，此升級還能讓背包作為噴射背包使用。",
+  "block.sophisticatedairtank.pressurized_backpack": "充氣中的精妙背包",
+  "gui.sophisticatedairtank.error.pressurized_air_exists": "每個背包只能安裝一個加壓空氣升級。",
+  "gui.sophisticatedairtank.error.battery_conflict": "加壓空氣升級與電池升級無法同時安裝。",
+  "gui.sophisticatedairtank.error.air_too_high": "目前儲存的空氣量需要至少 x%s 的堆疊倍率。",
+  "gui.sophisticatedairtank.pressurized_air": "加壓空氣",
+  "gui.sophisticatedairtank.pressurized_air.contents_tooltip": "%s / %s 單位",
+  "gui.sophisticatedairtank.pressurized_air.input": "輸入",
+  "gui.sophisticatedairtank.pressurized_air.output": "輸出"
+}

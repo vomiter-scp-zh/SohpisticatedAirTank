@@ -1,0 +1,14 @@
+{
+  "item.sophisticatedairtank.pressurized_air_upgrade": "Pressurized Air Upgrade",
+  "item.sophisticatedairtank.create_jetpack_upgrade": "Jetpack Upgrade",
+  "item.sophisticatedairtank.pressurized_air_upgrade.tooltip": "Replaces part of backpack's inventory with pressurized air storage.\nPlace the backpack and connect a rotating vertical shaft above it to refill air.\nNote that backpack's most functionality is disabled during air refilling.",
+  "item.sophisticatedairtank.create_jetpack_upgrade.tooltip": "Aside from the functionality of a pressurized air upgrade, this upgrade also makes your backpack a jetpack.",
+  "block.sophisticatedairtank.pressurized_backpack": "Charging Sophisticated Backpack",
+  "gui.sophisticatedairtank.error.pressurized_air_exists": "Only one Pressurized Air Upgrade can be installed.",
+  "gui.sophisticatedairtank.error.battery_conflict": "The Pressurized Air Upgrade and Battery Upgrade are mutually exclusive.",
+  "gui.sophisticatedairtank.error.air_too_high": "Stored air requires at least a x%s stack multiplier.",
+  "gui.sophisticatedairtank.pressurized_air": "Pressurized Air",
+  "gui.sophisticatedairtank.pressurized_air.contents_tooltip": "%s unit out of %s unit",
+  "gui.sophisticatedairtank.pressurized_air.input": "Input",
+  "gui.sophisticatedairtank.pressurized_air.output": "Output"
+}
