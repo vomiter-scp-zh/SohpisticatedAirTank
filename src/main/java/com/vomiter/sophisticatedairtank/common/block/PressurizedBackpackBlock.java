@@ -2,6 +2,7 @@ package com.vomiter.sophisticatedairtank.common.block;
 
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
+import com.vomiter.sophisticatedairtank.SophisticatedAirTank;
 import com.vomiter.sophisticatedairtank.registry.ModBlockEntities;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -146,6 +147,7 @@ public class PressurizedBackpackBlock extends HorizontalKineticBlock
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        SophisticatedAirTank.LOGGER.info("Call Use Without Item In Pressurized Backpack Block.");
         assert level != null;
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
@@ -157,14 +159,13 @@ public class PressurizedBackpackBlock extends HorizontalKineticBlock
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        SophisticatedAirTank.LOGGER.info("Call Use Item On In Pressurized Backpack Block.");
         assert level != null;
         if (level.isClientSide) {
             return ItemInteractionResult.SUCCESS;
         } else {
-            return getBlockEntityOptional(level, pos)
-                    .map(blockEntity -> blockEntity.restoreAndUseItem(stack, state, level, pos, player, hand, hit))
-                    .orElse(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
     }
 

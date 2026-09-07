@@ -77,14 +77,6 @@ dependencies {
 }
 
 dependencies {
-    jarJar(implementation(
-            "com.possible-triangle:flightlib-1.21.1-neoforge:4.0.36"
-    )) {
-        version {
-            strictly "[4.0.36,5.0.0)"
-            prefer "4.0.36"
-        }
-    }
 }
 
 base {

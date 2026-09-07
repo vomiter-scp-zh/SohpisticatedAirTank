@@ -1,15 +1,13 @@
 package com.vomiter.sophisticatedairtank;
 
 import com.mojang.logging.LogUtils;
-import com.possible_triangle.flightlib.api.IJetpack;
-import com.possible_triangle.flightlib.neoforge.api.NeoForgeFlightLib;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.vomiter.sophisticatedairtank.client.ClientEvents;
 import com.vomiter.sophisticatedairtank.common.BackpackForgeEvent;
 import com.vomiter.sophisticatedairtank.common.upgrade.PressurizedAirIntegration;
 import com.vomiter.sophisticatedairtank.common.upgrade.PressurizedAirUpgradeContainer;
-import com.vomiter.sophisticatedairtank.common.upgrade.PressurizedAirUtils;
+import com.vomiter.sophisticatedairtank.compat.FlightLibCompat;
 import com.vomiter.sophisticatedairtank.data.ModDataGenerator;
 import com.vomiter.sophisticatedairtank.network.ModNetwork;
 import com.vomiter.sophisticatedairtank.registry.ModBlockEntities;
@@ -23,7 +21,6 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.p3pp3rf1y.sophisticatedcore.common.gui.UpgradeContainerRegistry;
@@ -48,7 +45,9 @@ public final class SophisticatedAirTank {
         modBus.addListener(ModNetwork::registerPayloads);
         modBus.addListener(this::addCreativeTabContents);
         modBus.addListener(ModDataGenerator::generateData);
-        modBus.addListener(this::registerCapabilities);
+        if (ModList.get().isLoaded("flightlib")){
+            modBus.addListener(FlightLibCompat::registerCapabilities);
+        }
 
         BackpackForgeEvent.init();
         if (FMLEnvironment.dist.isClient()){
@@ -83,21 +82,4 @@ public final class SophisticatedAirTank {
         }
     }
 
-    private void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerItem(
-                NeoForgeFlightLib.ITEM_CAPABILITY,
-                (stack, context) -> {
-                    if (!PressurizedAirUtils.hasJetUpgrade(stack)) {
-                        return null;
-                    }
-
-                    return (IJetpack) stack.getItem();
-                },
-                net.p3pp3rf1y.sophisticatedbackpacks.init.ModItems.BACKPACK.get(),
-                net.p3pp3rf1y.sophisticatedbackpacks.init.ModItems.COPPER_BACKPACK.get(),
-                net.p3pp3rf1y.sophisticatedbackpacks.init.ModItems.IRON_BACKPACK.get(),
-                net.p3pp3rf1y.sophisticatedbackpacks.init.ModItems.DIAMOND_BACKPACK.get(),
-                net.p3pp3rf1y.sophisticatedbackpacks.init.ModItems.NETHERITE_BACKPACK.get()
-                );
-    }
 }
