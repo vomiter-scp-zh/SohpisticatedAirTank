@@ -11,15 +11,17 @@ import com.vomiter.sophisticatedairtank.data.ModDataGenerator;
 import com.vomiter.sophisticatedairtank.network.ModNetwork;
 import com.vomiter.sophisticatedairtank.registry.ModBlockEntities;
 import com.vomiter.sophisticatedairtank.registry.ModBlocks;
+import com.vomiter.sophisticatedairtank.registry.ModDataComponents;
 import com.vomiter.sophisticatedairtank.registry.ModItems;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.p3pp3rf1y.sophisticatedcore.common.gui.UpgradeContainerRegistry;
 import org.slf4j.Logger;
 
@@ -32,14 +34,14 @@ public final class SophisticatedAirTank {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
-    public SophisticatedAirTank() {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public SophisticatedAirTank(ModContainer mod, IEventBus modBus) {
         ModItems.ITEMS.register(modBus);
         ModBlocks.BLOCKS.register(modBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
+        ModDataComponents.register(modBus);
 
         modBus.addListener(this::commonSetup);
-        modBus.addListener(ModNetwork::onCommonSetup);
+        modBus.addListener(ModNetwork::registerPayloads);
         modBus.addListener(this::addCreativeTabContents);
         modBus.addListener(ModDataGenerator::generateData);
 
@@ -68,7 +70,7 @@ public final class SophisticatedAirTank {
     }
 
     private void addCreativeTabContents(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == net.p3pp3rf1y.sophisticatedbackpacks.init.ModItems.CREATIVE_TAB.getKey()) {
+        if (event.getTabKey() == ((DeferredHolder)net.p3pp3rf1y.sophisticatedbackpacks.init.ModItems.CREATIVE_TAB).getKey()) {
             event.accept(ModItems.PRESSURIZED_AIR_UPGRADE.get());
             if (ModList.get().isLoaded("create_jetpack")){
                 event.accept(ModItems.JET_PACK_UPGRADE.get());

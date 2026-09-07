@@ -26,16 +26,13 @@ public abstract class BacktankUtilMixin {
     }
 
     @Inject(
-            method = "consumeAir(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;F)V",
+            method = "consumeAir",
             at = @At("TAIL"),
             remap = false)
     private static void sophisticatedairtank$persistConsumedAir(
-            LivingEntity entity,
-            ItemStack stack,
-            float amount,
-            CallbackInfo ci) {
-        if (stack.getItem() instanceof PressurizedAirUpgradeItem) {
-            PressurizedAirIntegration.onExternalAirChanged(stack);
+            LivingEntity entity, ItemStack backtank, int i, CallbackInfo ci) {
+        if (backtank.getItem() instanceof PressurizedAirUpgradeItem) {
+            PressurizedAirIntegration.onExternalAirChanged(backtank);
         }
     }
 }

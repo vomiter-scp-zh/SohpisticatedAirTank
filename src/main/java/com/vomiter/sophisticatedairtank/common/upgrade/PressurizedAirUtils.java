@@ -1,16 +1,18 @@
 package com.vomiter.sophisticatedairtank.common.upgrade;
 
-import java.util.Optional;
 import net.minecraft.world.item.ItemStack;
-import net.p3pp3rf1y.sophisticatedbackpacks.api.CapabilityBackpackWrapper;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackBlockEntity;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.BackpackWrapper;
+import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.IBackpackWrapper;
 import net.p3pp3rf1y.sophisticatedcore.api.IStorageWrapper;
+
+import java.util.Optional;
 
 public final class PressurizedAirUtils {
 
     public static Optional<PressurizedAirUpgradeWrapper> find(ItemStack backpack) {
-        return backpack.getCapability(CapabilityBackpackWrapper.getCapabilityInstance()).resolve().flatMap(PressurizedAirUtils::find);
+        IBackpackWrapper backpackWrapper = BackpackWrapper.fromStack(backpack);
+        return find(backpackWrapper);
     }
 
     public static Optional<PressurizedAirUpgradeWrapper> find(IStorageWrapper storageWrapper) {
@@ -49,18 +51,18 @@ public final class PressurizedAirUtils {
 
 
     public static float getAir(ItemStack backpack) {
-        return find(backpack).map(PressurizedAirUpgradeWrapper::getAir).orElse(0.0F);
+        return find(backpack).map(PressurizedAirUpgradeWrapper::getAir).orElse(0);
     }
 
     public static int getCapacity(ItemStack backpack) {
         return find(backpack).map(PressurizedAirUpgradeWrapper::getCapacity).orElse(0);
     }
 
-    public static float consumeAir(ItemStack backpack, float amount) {
-        return find(backpack).map(wrapper -> wrapper.consumeAir(amount)).orElse(0.0F);
+    public static float consumeAir(ItemStack backpack, int amount) {
+        return find(backpack).map(wrapper -> wrapper.consumeAir(amount)).orElse(0);
     }
 
-    public static float addAir(ItemStack backpack, float amount) {
-        return find(backpack).map(wrapper -> wrapper.addAir(amount)).orElse(0.0F);
+    public static float addAir(ItemStack backpack, int amount) {
+        return find(backpack).map(wrapper -> wrapper.addAir(amount)).orElse(0);
     }
 }

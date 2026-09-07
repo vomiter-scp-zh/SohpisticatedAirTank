@@ -3,7 +3,8 @@ package com.vomiter.sophisticatedairtank.common.upgrade;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.p3pp3rf1y.sophisticatedbackpacks.api.CapabilityBackpackWrapper;
+import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.BackpackWrapper;
+import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.IBackpackWrapper;
 import net.p3pp3rf1y.sophisticatedbackpacks.util.PlayerInventoryProvider;
 
 import java.lang.ref.WeakReference;
@@ -26,11 +27,11 @@ public final class PressurizedAirIntegration {
                     || PlayerInventoryProvider.OFFHAND_INVENTORY.equals(handlerName)) {
                 return false;
             }
-            backpack.getCapability(CapabilityBackpackWrapper.getCapabilityInstance()).ifPresent(storage ->
-                    storage.getUpgradeHandler().getTypeWrappers(PressurizedAirUpgradeItem.TYPE).forEach(wrapper -> {
-                        track(wrapper);
-                        sources.add(wrapper.getUpgradeStack());
-                    }));
+            IBackpackWrapper wrapper = BackpackWrapper.fromStack(backpack);
+            wrapper.getUpgradeHandler().getTypeWrappers(PressurizedAirUpgradeItem.TYPE).forEach(upgradeWrapper -> {
+                track(upgradeWrapper);
+                sources.add(upgradeWrapper.getUpgradeStack());
+            });
             return false;
         });
         return sources;

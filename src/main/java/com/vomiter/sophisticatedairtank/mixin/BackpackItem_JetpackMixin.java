@@ -4,7 +4,6 @@ import com.possible_triangle.create_jetpack.config.Configs;
 import com.possible_triangle.flightlib.api.*;
 import com.possible_triangle.flightlib.api.sources.CuriosSource;
 import com.possible_triangle.flightlib.api.sources.EquipmentSource;
-import com.possible_triangle.flightlib.forge.api.ForgeFlightLib;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.vomiter.sophisticatedairtank.common.upgrade.PressurizedAirUtils;
 import net.minecraft.core.Direction;
@@ -13,9 +12,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,23 +26,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 @Mixin(BackpackItem.class)
-public class BackpackItem_JetpackMixin implements IJetpack, ICapabilityProvider {
-    @Unique
-    private final LazyOptional<IJetpack> sophisticatedairtank$jetpackCapability =
-            LazyOptional.of(() -> this);
-
-    @Override
-    public <T> @NotNull LazyOptional<T> getCapability(
-            @NotNull Capability<T> capability,
-            @Nullable Direction side
-    ) {
-        if (capability == ForgeFlightLib.JETPACK_CAPABILITY) {
-            return sophisticatedairtank$jetpackCapability.cast();
-        }
-
-        return LazyOptional.empty();
-    }
-
+public class BackpackItem_JetpackMixin implements IJetpack {
     @Override
     public @NotNull ControlType activeType(@NotNull IJetpack.Context context) {
         return ControlType.TOGGLE;
@@ -135,7 +116,7 @@ public class BackpackItem_JetpackMixin implements IJetpack, ICapabilityProvider 
 
     @Override
     public void onUse(@NotNull IJetpack.Context context) {
-        if (context.getWorld().getGameTime() % 20 != 0L) return;
+        if (context.getLevel().getGameTime() % 20 != 0L) return;
         BacktankUtil.canAbsorbDamage(context.getEntity(), sophisticatedjetpack$secondsPerTank(context));
     }
 

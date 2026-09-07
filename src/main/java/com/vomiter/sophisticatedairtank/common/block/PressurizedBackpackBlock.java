@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -144,16 +145,29 @@ public class PressurizedBackpackBlock extends HorizontalKineticBlock
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         assert level != null;
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {
             return getBlockEntityOptional(level, pos)
-                    .map(blockEntity -> blockEntity.restoreAndUse(player, hand, hit))
+                    .map(blockEntity -> blockEntity.restoreAndUse(player, hit))
                     .orElse(InteractionResult.PASS);
         }
     }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        assert level != null;
+        if (level.isClientSide) {
+            return ItemInteractionResult.SUCCESS;
+        } else {
+            return getBlockEntityOptional(level, pos)
+                    .map(blockEntity -> blockEntity.restoreAndUseItem(stack, state, level, pos, player, hand, hit))
+                    .orElse(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
+        }
+    }
+
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
@@ -214,7 +228,7 @@ public class PressurizedBackpackBlock extends HorizontalKineticBlock
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return getBlockEntityOptional(level, pos)
                 .map(PressurizedBackpackBlockEntity::getDelegateBackpack)
                 .map(ItemStack::copy)
@@ -222,7 +236,7 @@ public class PressurizedBackpackBlock extends HorizontalKineticBlock
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
         return false;
     }
 

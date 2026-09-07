@@ -12,13 +12,16 @@ import java.util.Optional;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,7 +32,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackBlock;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackBlockEntity;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.BackpackWrapper;
@@ -170,7 +172,7 @@ public class PressurizedBackpackBlockEntity extends KineticBlockEntity {
         }
     }
 
-    public InteractionResult restoreAndUse(Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult restoreAndUse(Player player, BlockHitResult hit) {
         Level currentLevel = level;
         if (currentLevel == null || level.isClientSide() || !restoreDelegate()) {
             return InteractionResult.PASS;
@@ -180,11 +182,33 @@ public class PressurizedBackpackBlockEntity extends KineticBlockEntity {
                 new BackpackForgeEvent.DelayedRunnable(
                         level.getGameTime() + 2,
                         level,
-                        () -> level.getBlockState(pos).use(currentLevel, player, hand, hit)
+                        () -> level.getBlockState(pos).useWithoutItem(currentLevel, player, hit)
                 )
         );
         return InteractionResult.SUCCESS;
     }
+
+    public ItemInteractionResult restoreAndUseItem(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        Level currentLevel = level;
+        if (currentLevel == null || level.isClientSide() || !restoreDelegate()) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        BackpackForgeEvent.delayedTasks.add(
+                new BackpackForgeEvent.DelayedRunnable(
+                        level.getGameTime() + 2,
+                        level,
+                        () -> level.getBlockState(pos).useItemOn(
+                                stack,
+                                level,
+                                player,
+                                hand,
+                                hit
+                        )
+                )
+        );
+        return ItemInteractionResult.SUCCESS;
+    }
+
 
     boolean restoreDelegate() {
         if (level == null || delegateBackpack.isEmpty() || delegateState == null) {
@@ -205,20 +229,20 @@ public class PressurizedBackpackBlockEntity extends KineticBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         if (!delegateBackpack.isEmpty()) {
-            tag.put(DELEGATE_BACKPACK_TAG, delegateBackpack.save(new CompoundTag()));
+            tag.put(DELEGATE_BACKPACK_TAG, delegateBackpack.save(registries, new CompoundTag()));
         }
         tag.put(DELEGATE_STATE_TAG, writeDelegateState(delegateState));
         tag.putInt(TIMER_TAG, airTimer);
     }
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         delegateBackpack = tag.contains(DELEGATE_BACKPACK_TAG)
-                ? ItemStack.of(tag.getCompound(DELEGATE_BACKPACK_TAG))
+                ? ItemStack.parseOptional(registries, tag.getCompound(DELEGATE_BACKPACK_TAG))
                 : ItemStack.EMPTY;
         delegateState = readDelegateState(tag.getCompound(DELEGATE_STATE_TAG));
         airTimer = tag.getInt(TIMER_TAG);
@@ -226,7 +250,7 @@ public class PressurizedBackpackBlockEntity extends KineticBlockEntity {
 
     private static CompoundTag writeDelegateState(BlockState state) {
         CompoundTag tag = new CompoundTag();
-        ResourceLocation id = ForgeRegistries.BLOCKS.getKey(state.getBlock());
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         if (id != null) {
             tag.putString(DELEGATE_BLOCK_TAG, id.toString());
         }
@@ -253,7 +277,7 @@ public class PressurizedBackpackBlockEntity extends KineticBlockEntity {
 
     private static BlockState readDelegateState(CompoundTag tag) {
         ResourceLocation id = ResourceLocation.tryParse(tag.getString(DELEGATE_BLOCK_TAG));
-        Block block = id == null ? null : ForgeRegistries.BLOCKS.getValue(id);
+        Block block = id == null ? null : BuiltInRegistries.BLOCK.get(id);
         BlockState state = block instanceof BackpackBlock
                 ? block.defaultBlockState()
                 : ModBlocks.BACKPACK.get().defaultBlockState();

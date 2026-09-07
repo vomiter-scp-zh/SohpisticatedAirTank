@@ -1,9 +1,9 @@
 package com.vomiter.sophisticatedairtank.network;
 
 import net.minecraft.client.Minecraft;
-import net.p3pp3rf1y.sophisticatedbackpacks.api.CapabilityBackpackWrapper;
+import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.BackpackWrapper;
+import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.IBackpackWrapper;
 import net.p3pp3rf1y.sophisticatedbackpacks.util.PlayerInventoryProvider;
-import net.p3pp3rf1y.sophisticatedcore.api.IStorageWrapper;
 
 public class ModNetworkClientHandler {
     static void handleSATSyncResponse(ModNetwork.SATSyncResponse response){
@@ -11,9 +11,8 @@ public class ModNetworkClientHandler {
         PlayerInventoryProvider.get().runOnBackpacks(
                 Minecraft.getInstance().player,
                 ((backpack, s, s1, i) -> {
-                    backpack.getCapability(CapabilityBackpackWrapper.getCapabilityInstance()).ifPresent(
-                            IStorageWrapper::onContentsNbtUpdated
-                    );
+                    IBackpackWrapper backpackWrapper = BackpackWrapper.fromStack(backpack);
+                    backpackWrapper.onContentsNbtUpdated();
                     return true;
         }));
     }

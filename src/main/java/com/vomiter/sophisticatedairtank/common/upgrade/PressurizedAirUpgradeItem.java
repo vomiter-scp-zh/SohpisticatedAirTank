@@ -78,13 +78,13 @@ public class PressurizedAirUpgradeItem extends UpgradeItemBase<PressurizedAirUpg
         if (multiplierRequired > 1.0D) {
             DecimalFormat format = new DecimalFormat("0.#");
             String required = format.format(Math.ceil(multiplierRequired * 10.0D) / 10.0D);
-            return new UpgradeSlotChangeResult.Fail(
+            return UpgradeSlotChangeResult.fail(
                     Component.translatable("gui.sophisticatedairtank.error.air_too_high", required),
                     Collections.emptySet(),
                     Collections.emptySet(),
                     Collections.emptySet());
         }
-        return new UpgradeSlotChangeResult.Success();
+        return UpgradeSlotChangeResult.success();
     }
 
     public int getMaxAir(IStorageWrapper storageWrapper) {

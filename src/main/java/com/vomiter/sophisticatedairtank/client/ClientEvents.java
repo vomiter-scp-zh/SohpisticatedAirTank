@@ -7,14 +7,16 @@ import com.vomiter.sophisticatedairtank.registry.ModBlockEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.p3pp3rf1y.sophisticatedbackpacks.api.CapabilityBackpackWrapper;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.BackpackWrapper;
+import net.p3pp3rf1y.sophisticatedbackpacks.backpack.wrapper.IBackpackWrapper;
 import net.p3pp3rf1y.sophisticatedbackpacks.util.PlayerInventoryProvider;
 import net.p3pp3rf1y.sophisticatedcore.client.gui.UpgradeGuiManager;
 
@@ -27,7 +29,7 @@ public final class ClientEvents {
         modBus.addListener(ClientEvents::onClientSetup);
         modBus.addListener(ClientEvents::registerRenderers);
 
-        var forgeBus = MinecraftForge.EVENT_BUS;
+        var forgeBus = NeoForge.EVENT_BUS;
         ClientEvents.initForge(forgeBus);
     }
 
@@ -63,21 +65,18 @@ public final class ClientEvents {
                 () -> {
                     PlayerInventoryProvider.get().runOnBackpacks(
                             player,
-                            ((backpack, handlerName, identifier, slot) -> {
-                                backpack.getCapability(
-                                        CapabilityBackpackWrapper
-                                                .getCapabilityInstance()
-                                ).ifPresent(wrapper ->
-                                        wrapper.getContentsUuid()
-                                                .ifPresent(uuid -> {
-                                                            SophisticatedAirTank.LOGGER.info("UUID = {}", uuid);
-                                                            ModNetwork.CHANNEL.sendToServer(new ModNetwork.SATSyncRequest(uuid));
-                                                        }
+                            (backpack, handlerName, identifier, slot) -> {
+                                IBackpackWrapper wrapper = BackpackWrapper.fromStack(backpack);
 
-                                                )
-                                );
+                                wrapper.getContentsUuid().ifPresent(uuid -> {
+                                    SophisticatedAirTank.LOGGER.info("UUID = {}", uuid);
+                                    PacketDistributor.sendToServer(
+                                            new ModNetwork.SATSyncRequest(uuid)
+                                    );
+                                });
+
                                 return true;
-                            })
+                            }
                     );
                 }
         ));
@@ -96,7 +95,7 @@ public final class ClientEvents {
         delayedTasks.clear();
     }
 
-    public static void onLevelTick(TickEvent.ClientTickEvent event){
+    public static void onLevelTick(ClientTickEvent.Post event){
         if (Minecraft.getInstance().level == null) return;
         for (int i = 0; i < delayedTasks.size(); i++) {
             var task = delayedTasks.pollFirst();

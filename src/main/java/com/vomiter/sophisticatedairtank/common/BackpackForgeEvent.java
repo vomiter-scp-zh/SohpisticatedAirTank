@@ -2,9 +2,9 @@ package com.vomiter.sophisticatedairtank.common;
 
 import com.vomiter.sophisticatedairtank.common.block.PressurizedBackpackConversion;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class BackpackForgeEvent {
     public record DelayedRunnable(long gameTick, Level level, Runnable runnable){}
 
     public static void init(){
-        var forgeBus = MinecraftForge.EVENT_BUS;
+        var forgeBus = NeoForge.EVENT_BUS;
         forgeBus.addListener(BackpackForgeEvent::onLevelTick);
         forgeBus.addListener(BackpackForgeEvent::onServerStartEvent);
         forgeBus.addListener(PressurizedBackpackConversion::onNeighborNotify);
@@ -26,12 +26,12 @@ public class BackpackForgeEvent {
         delayedTasks.clear();
     }
 
-    public static void onLevelTick(TickEvent.LevelTickEvent event){
-        if(event.level.isClientSide) return;
+    public static void onLevelTick(LevelTickEvent.Post event){
+        if(event.getLevel().isClientSide) return;
         for (int i = 0; i < BackpackForgeEvent.delayedTasks.size(); i++) {
             var task = BackpackForgeEvent.delayedTasks.pollFirst();
             if(task == null) break;
-            if (event.level.getGameTime() > task.gameTick() && event.level.dimension().location().equals(task.level().dimension().location())) {
+            if (event.getLevel().getGameTime() > task.gameTick() && event.getLevel().dimension().location().equals(task.level().dimension().location())) {
                 task.runnable().run();
             } else {
                 BackpackForgeEvent.delayedTasks.addLast(new DelayedRunnable(

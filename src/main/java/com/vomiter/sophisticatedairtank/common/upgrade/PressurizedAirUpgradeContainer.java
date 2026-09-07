@@ -8,68 +8,126 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.p3pp3rf1y.sophisticatedcore.client.gui.INameableEmptySlot;
 import net.p3pp3rf1y.sophisticatedcore.common.gui.SlotSuppliedHandler;
 import net.p3pp3rf1y.sophisticatedcore.common.gui.UpgradeContainerBase;
 import net.p3pp3rf1y.sophisticatedcore.common.gui.UpgradeContainerType;
 
-import java.util.List;
 import java.util.function.Supplier;
 
-public class PressurizedAirUpgradeContainer extends UpgradeContainerBase<
-        PressurizedAirUpgradeWrapper, PressurizedAirUpgradeContainer> {
+public class PressurizedAirUpgradeContainer
+        extends UpgradeContainerBase<
+        PressurizedAirUpgradeWrapper,
+        PressurizedAirUpgradeContainer
+        > {
 
-    public static final ResourceLocation EMPTY_TANK_INPUT_SLOT_BACKGROUND = SophisticatedAirTank.modLoc("item/empty_tank_input_slot");
-    public static final ResourceLocation EMPTY_TANK_OUTPUT_SLOT_BACKGROUND = SophisticatedAirTank.modLoc("item/empty_tank_output_slot");
+    public static final ResourceLocation EMPTY_TANK_INPUT_SLOT_BACKGROUND =
+            SophisticatedAirTank.modLoc(
+                    "item/empty_tank_input_slot"
+            );
 
-    public static final UpgradeContainerType<PressurizedAirUpgradeWrapper, PressurizedAirUpgradeContainer> TYPE =
-            new UpgradeContainerType<>(PressurizedAirUpgradeContainer::new);
+    public static final ResourceLocation EMPTY_TANK_OUTPUT_SLOT_BACKGROUND =
+            SophisticatedAirTank.modLoc(
+                    "item/empty_tank_output_slot"
+            );
 
-    public PressurizedAirUpgradeContainer(Player player, int containerId,
+    public static final UpgradeContainerType<
+            PressurizedAirUpgradeWrapper,
+            PressurizedAirUpgradeContainer
+            > TYPE = new UpgradeContainerType<>(
+            PressurizedAirUpgradeContainer::new
+    );
+
+    public PressurizedAirUpgradeContainer(
+            Player player,
+            int containerId,
             PressurizedAirUpgradeWrapper wrapper,
-            UpgradeContainerType<PressurizedAirUpgradeWrapper, PressurizedAirUpgradeContainer> type) {
+            UpgradeContainerType<
+                    PressurizedAirUpgradeWrapper,
+                    PressurizedAirUpgradeContainer
+                    > type
+    ) {
         super(player, containerId, wrapper, type);
-        slots.add(new AirIOSlot(() -> this.upgradeWrapper.getAirIoInventory(),
-                PressurizedAirTransferInventory.INPUT_SLOT).setBackground(InventoryMenu.BLOCK_ATLAS, EMPTY_TANK_INPUT_SLOT_BACKGROUND));
-        slots.add(new AirIOSlot(() -> this.upgradeWrapper.getAirIoInventory(),
-                PressurizedAirTransferInventory.OUTPUT_SLOT).setBackground(InventoryMenu.BLOCK_ATLAS, EMPTY_TANK_OUTPUT_SLOT_BACKGROUND));
-    }
 
-    public float getAir() {
-        return PressurizedAirUpgradeWrapper.getAir(getUpgradeStack());
-    }
+        slots.add(
+                new AirIOSlot(
+                        supplyFromWrapper(
+                                PressurizedAirUpgradeWrapper::getAirIoInventory
+                        ),
+                        PressurizedAirTransferInventory.INPUT_SLOT,
+                        Component.translatable(
+                                "gui.sophisticatedairtank.pressurized_air.input"
+                        ).withStyle(ChatFormatting.GOLD)
+                ).setBackground(
+                        InventoryMenu.BLOCK_ATLAS,
+                        EMPTY_TANK_INPUT_SLOT_BACKGROUND
+                )
+        );
 
-    public int getCapacity() {
-        return PressurizedAirUpgradeWrapper.getStoredCapacity(getUpgradeStack());
+        slots.add(
+                new AirIOSlot(
+                        supplyFromWrapper(
+                                PressurizedAirUpgradeWrapper::getAirIoInventory
+                        ),
+                        PressurizedAirTransferInventory.OUTPUT_SLOT,
+                        Component.translatable(
+                                "gui.sophisticatedairtank.pressurized_air.output"
+                        ).withStyle(ChatFormatting.GOLD)
+                ).setBackground(
+                        InventoryMenu.BLOCK_ATLAS,
+                        EMPTY_TANK_OUTPUT_SLOT_BACKGROUND
+                )
+        );
     }
 
     @Override
-    public void handleMessage(CompoundTag data) {
-        // Ordinary menu slot synchronization handles item movement.
+    public void handlePacket(CompoundTag data) {
+        // 普通 menu slot synchronization 負責物品移動。
     }
 
-    public static final class AirIOSlot extends SlotSuppliedHandler {
-        private final int ioSlot;
+    public int getAir() {
+        return upgradeWrapper.getAir();
+    }
 
-        private AirIOSlot(Supplier<IItemHandler> inventory, int ioSlot) {
-            super(inventory, ioSlot, -100, -100);
-            this.ioSlot = ioSlot;
+    public int getCapacity() {
+        return upgradeWrapper.getCapacity();
+    }
+
+    public static final class AirIOSlot
+            extends SlotSuppliedHandler
+            implements INameableEmptySlot {
+
+        private final Component emptyTooltip;
+
+        private AirIOSlot(
+                Supplier<IItemHandler> inventory,
+                int slot,
+                Component emptyTooltip
+        ) {
+            super(inventory, slot, -100, -100);
+            this.emptyTooltip = emptyTooltip;
         }
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return PressurizedAirTransferInventory.accepts(stack) && super.mayPlace(stack);
+            return PressurizedAirTransferInventory.accepts(stack)
+                    && super.mayPlace(stack);
         }
 
-        public List<Component> getAirTooltip() {
-            if (ioSlot == PressurizedAirTransferInventory.INPUT_SLOT) {
-                return List.of(
-                        Component.translatable("gui.sophisticatedairtank.pressurized_air.input")
-                                .withStyle(ChatFormatting.GOLD));
-            }
-            return List.of(
-                    Component.translatable("gui.sophisticatedairtank.pressurized_air.output")
-                            .withStyle(ChatFormatting.GOLD));
+        @Override
+        public int getMaxStackSize(ItemStack stack) {
+            return 1;
+        }
+
+        @Override
+        public boolean hasEmptyTooltip() {
+            return true;
+        }
+
+        @Override
+        public Component getEmptyTooltip() {
+            return emptyTooltip;
         }
     }
 }
