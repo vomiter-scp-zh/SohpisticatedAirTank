@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create_jetpack"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_jetpack": {
+      "conditions": {
+        "items": [
+          {
+            "items": "create_jetpack:jetpack"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "sophisticatedairtank:jet_pack_upgrade"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_jetpack"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "sophisticatedairtank:jet_pack_upgrade"
+    ]
+  }
+}

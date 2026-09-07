@@ -47,11 +47,7 @@ public class PressurizedAirUpgradeWrapper
     }
 
     public static int getAir(ItemStack stack) {
-        if (stack.has(AllDataComponents.BACKTANK_AIR)) {
-            return stack.getOrDefault(AllDataComponents.BACKTANK_AIR, 0);
-        }
-        // 舊版本資料遷移前的 fallback
-        return stack.getOrDefault(ModDataComponents.AIR, 0);
+        return stack.getOrDefault(AllDataComponents.BACKTANK_AIR, 0);
     }
 
     public static int getStoredCapacity(ItemStack stack) {
@@ -98,9 +94,6 @@ public class PressurizedAirUpgradeWrapper
                 Math.max(0, Math.min(air, capacity))
         );
         upgrade.set(ModDataComponents.CAPACITY, capacity);
-
-        // 完成舊資料遷移後，避免存在兩份 air
-        upgrade.remove(ModDataComponents.AIR);
     }
 
     public void setAir(int air) {
@@ -122,14 +115,7 @@ public class PressurizedAirUpgradeWrapper
         int previousAir = getAir(upgrade);
         int clampedAir = Math.max(0, Math.min(previousAir, capacity));
 
-        boolean needsMigration =
-                !upgrade.has(AllDataComponents.BACKTANK_AIR)
-                        || upgrade.has(ModDataComponents.AIR);
-
-        boolean changed =
-                needsMigration
-                        || previousCapacity != capacity
-                        || previousAir != clampedAir;
+        boolean changed = previousCapacity != capacity || previousAir != clampedAir;
 
         if (!changed) {
             return;
@@ -137,8 +123,6 @@ public class PressurizedAirUpgradeWrapper
 
         upgrade.set(ModDataComponents.CAPACITY, capacity);
         upgrade.set(AllDataComponents.BACKTANK_AIR, clampedAir);
-        upgrade.remove(ModDataComponents.AIR);
-
         if (saveChanges) {
             save();
         }

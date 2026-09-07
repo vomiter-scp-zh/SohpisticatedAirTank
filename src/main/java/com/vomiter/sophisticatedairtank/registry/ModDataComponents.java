@@ -1,6 +1,5 @@
 package com.vomiter.sophisticatedairtank.registry;
 
-import com.mojang.serialization.Codec;
 import com.vomiter.sophisticatedairtank.SophisticatedAirTank;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -19,13 +18,6 @@ public final class ModDataComponents {
                     Registries.DATA_COMPONENT_TYPE,
                     SophisticatedAirTank.MOD_ID
             );
-
-    public static final DataComponentType<Integer> AIR = register(
-            "air",
-            builder -> builder
-                    .persistent(ExtraCodecs.NON_NEGATIVE_INT)
-                    .networkSynchronized(ByteBufCodecs.VAR_INT)
-    );
 
     public static final DataComponentType<Integer> CAPACITY = register(
             "capacity",

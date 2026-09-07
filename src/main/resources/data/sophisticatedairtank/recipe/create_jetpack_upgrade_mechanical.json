@@ -1,45 +1,39 @@
 {
-  "type": "forge:conditional",
-  "recipes": [
+  "neoforge:conditions": [
     {
-      "conditions": [
-        {
-          "type": "forge:mod_loaded",
-          "modid": "create_jetpack"
-        }
-      ],
-      "recipe": {
-        "type": "create_jetpack:copy_nbt_mechanical_crafting",
-        "pattern": [
-          " PSP ",
-          "PYXYP",
-          "PCECP",
-          " C C "
-        ],
-        "key": {
-          "E": {
-            "item": "minecraft:elytra"
-          },
-          "C": {
-            "item": "create:chute"
-          },
-          "X": {
-            "item": "sophisticatedairtank:pressurized_air_upgrade"
-          },
-          "S": {
-            "item": "create:shaft"
-          },
-          "Y": {
-            "item": "create:precision_mechanism"
-          },
-          "P": {
-            "tag": "forge:plates/brass"
-          }
-        },
-        "result": {
-          "item": "sophisticatedairtank:create_jetpack_upgrade"
-        }
-      }
+      "type": "neoforge:mod_loaded",
+      "modid": "create_jetpack"
     }
-  ]
+  ],
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "pattern": [
+    " PSP ",
+    "PYXYP",
+    "PCECP",
+    " C C "
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:elytra"
+    },
+    "C": {
+      "item": "create:chute"
+    },
+    "X": {
+      "item": "sophisticatedairtank:pressurized_air_upgrade"
+    },
+    "S": {
+      "item": "create:shaft"
+    },
+    "Y": {
+      "item": "create:precision_mechanism"
+    },
+    "P": {
+      "tag": "c:plates/brass"
+    }
+  },
+  "result": {
+    "id": "sophisticatedairtank:create_jetpack_upgrade"
+  }
 }

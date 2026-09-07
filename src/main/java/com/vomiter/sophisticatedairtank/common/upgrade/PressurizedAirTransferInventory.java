@@ -218,7 +218,6 @@ public final class PressurizedAirTransferInventory extends StatefulComponentItem
                 AllDataComponents.BACKTANK_AIR,
                 Math.max(0, Math.min(air, capacity))
         );
-        stack.remove(ModDataComponents.AIR);
     }
 
     private record ItemAirAccess(

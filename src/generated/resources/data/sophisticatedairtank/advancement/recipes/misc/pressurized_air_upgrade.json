@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "create:copper_backtank"
-            ]
+            "items": "create:copper_backtank"
           }
         ]
       },
@@ -22,14 +20,13 @@
   },
   "requirements": [
     [
-      "has_back_tank",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_back_tank"
     ]
   ],
   "rewards": {
     "recipes": [
       "sophisticatedairtank:pressurized_air_upgrade"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }
