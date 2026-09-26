@@ -72,8 +72,8 @@ dependencies {
 
     implementation "curse.maven:sophisticated-backpacks-422301:8818204"
     implementation "curse.maven:sophisticated-core-618298:8815718"
-    implementation "curse.maven:create-jetpack-655608:8545274"
-    implementation "com.possible-triangle:flightlib-1.21.1-neoforge:4.0.36"
+    compileOnly "curse.maven:create-jetpack-655608:8545274"
+    compileOnly "com.possible-triangle:flightlib-1.21.1-neoforge:4.0.36"
 }
 
 dependencies {
