@@ -3,6 +3,7 @@ package com.vomiter.sophisticatedairtank;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
+import com.simibubi.create.content.equipment.armor.NetheriteDivingHandler;
 import com.vomiter.sophisticatedairtank.client.ClientEvents;
 import com.vomiter.sophisticatedairtank.common.BackpackForgeEvent;
 import com.vomiter.sophisticatedairtank.common.upgrade.PressurizedAirIntegration;
