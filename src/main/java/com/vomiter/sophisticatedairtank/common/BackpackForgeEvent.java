@@ -1,10 +1,12 @@
 package com.vomiter.sophisticatedairtank.common;
 
 import com.vomiter.sophisticatedairtank.common.block.PressurizedBackpackConversion;
+import com.vomiter.sophisticatedairtank.compat.CuriosCompat;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.fml.ModList;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ public class BackpackForgeEvent {
         forgeBus.addListener(BackpackForgeEvent::onServerStartEvent);
         forgeBus.addListener(PressurizedBackpackConversion::onNeighborNotify);
         forgeBus.addListener(PressurizedBackpackConversion::onPlaced);
+        if (ModList.get().isLoaded("curios")){
+            forgeBus.addListener(CuriosCompat::onCurioChangeEvent);
+        }
     }
 
     public static void onServerStartEvent(ServerStartingEvent event){

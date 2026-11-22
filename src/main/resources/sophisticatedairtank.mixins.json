@@ -6,6 +6,8 @@
   "mixins": [
     "BackpackItem_JetpackMixin",
     "BacktankUtilMixin",
+    "DivingHelmetItemMixin",
+    "NetheriteDivingHandlerMixin",
     "SlotMixin"
   ],
   "client": [
